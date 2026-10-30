@@ -134,7 +134,8 @@ class World:
             keyring=keyring or self.keyring,
             observed=observed or self.observed,
             expected_tip=self.ledger.tip if tip == "auto" else tip,
-            revocations=self.revocations if revocations == "auto" else revocations)
+            revocations=self.revocations if revocations == "auto" else revocations,
+            caller_id="owner-1")
 
     def request(self, action, **payload):
         self.n += 1

@@ -32,7 +32,7 @@ def main(argv=None):
         trusted = TrustedContext(
             policy=t["policy"], expected_policy_sha256=t["expected_policy_sha256"],
             keyring=t["keyring"], observed=t["observed"],
-            expected_tip=t.get("expected_tip"), revocations=t.get("revocations"))
+            expected_tip=t.get("expected_tip"), revocations=t.get("revocations"), caller_id=t.get("caller_id"))
         envelope = _load(args.envelope) if args.envelope else None
         request = _load(args.request)
         lock_fd = os.open(args.ledger + ".lock", os.O_CREAT | os.O_RDWR, 0o600)
@@ -43,7 +43,7 @@ def main(argv=None):
             if args.apply:
                 outcome = process(trusted, envelope, request, ledger, args.now)
                 decision = outcome.decision
-                if outcome.applied:
+                if outcome.applied or outcome.observation_applied:
                     tmp = args.ledger + ".tmp"
                     with open(tmp, "w", encoding="utf-8") as fh:
                         fh.write(ledger.to_jsonl())

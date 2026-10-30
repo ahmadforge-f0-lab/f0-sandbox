@@ -124,6 +124,7 @@ class TrustedContext:
     observed: dict
     expected_tip: object          # str, or None = unanchored (always denied)
     revocations: object = None    # signed revocation list, or None = unavailable
+    caller_id: object = None      # authenticated recovery caller, supplied by protected runner
 
 
 @dataclass(frozen=True)
@@ -134,11 +135,12 @@ class Decision:
     reasons: tuple
     events: tuple
     provenance: dict = field(default_factory=dict)
+    observations: tuple = ()      # signed safety facts; never requested task effects
 
     def to_dict(self):
         return {"allow": self.allow, "action": self.action, "task_id": self.task_id,
                 "reasons": list(self.reasons), "events": list(self.events),
-                "provenance": self.provenance}
+                "provenance": self.provenance, "observations": list(self.observations)}
 
     @property
     def digest(self):
@@ -149,6 +151,7 @@ class Decision:
 class Outcome:
     decision: Decision
     applied: bool
+    observation_applied: bool = False
 
 
 class Ctx:
@@ -160,6 +163,7 @@ class Ctx:
         self.terms = None
         self.envelope_digest = None
         self.revoked_by_list = False
+        self.revocation_observation = None
         self.reasons = set()
         self.events = []
         self.fatal = False
@@ -316,6 +320,38 @@ def check_envelope_binding(c):
     c.terms = st.terms
 
 
+def check_reconcile_authority(c):
+    """Only an authenticated policy owner may request recovery in registered scope.
+
+    The identity comes from the trusted runner, never the request or author_id.
+    Recovery intentionally does not depend on an unexpired task envelope.
+    """
+    caller = c.trusted.caller_id
+    principal = c.policy["principals"].get(caller) if isinstance(caller, str) else None
+    if (caller not in c.policy["owners"] or principal is None
+            or principal["kind"] != "owner"):
+        c.deny("RECONCILE_CALLER_UNAUTHORIZED", fatal=True)
+    if not c.state.registered:
+        c.deny("TASK_NOT_REGISTERED", fatal=True)
+        return
+    terms, obs = c.state.terms, c.trusted.observed
+    if terms["repo"] != c.policy["repo"] or obs["repo"] != terms["repo"]:
+        c.deny("REPO_SCOPE_VIOLATION", fatal=True)
+    if obs["branch"] != terms["work_branch"] or obs["base_sha"] != terms["base_sha"]:
+        c.deny("RECONCILE_SCOPE_VIOLATION", fatal=True)
+
+
+def observed_revocations(ledger, repo):
+    """Read repository-wide monotonic signed observations from the anchored chain."""
+    latest, revoked = -1, set()
+    for event in ledger.events:
+        obs = event["payload"].get("_revocation_observation")
+        if obs is not None and obs["repo"] == repo:
+            latest = max(latest, obs["issued_at"])
+            revoked.update(obs["task_ids"])
+    return latest, revoked
+
+
 def check_revocation(c):
     """Revocation status must be fresh, owner-signed and available, else fail closed.
 
@@ -343,6 +379,21 @@ def check_revocation(c):
         if strict:
             c.deny("REVOCATION_LIST_STALE")
         return
+    latest, revoked = observed_revocations(c.ledger, c.policy["repo"])
+    # A timestamp alone is insufficient: equal-epoch or newer omission must not
+    # undo a previously observed revocation. Task ids are single-use identities.
+    if c.task_id in revoked:
+        c.revoked_by_list = True
+        if strict:
+            c.deny("TASK_REVOKED")
+    if rv["issued_at"] < latest:
+        if strict:
+            c.deny("REVOCATION_STATUS_ROLLBACK")
+        return
+    if rv["issued_at"] > latest or not set(rv["task_ids"]).issubset(revoked):
+        c.revocation_observation = {
+            "repo": c.policy["repo"], "issued_at": rv["issued_at"],
+            "task_ids": list(rv["task_ids"]), "signed_status": dict(rv)}
     if c.task_id in rv["task_ids"]:
         c.revoked_by_list = True
         if strict:
@@ -403,26 +454,43 @@ def _fold(path):
     return unicodedata.normalize("NFKC", path).casefold()
 
 
-def _glob_regex(glob):
-    out, i = [], 0
+def _glob_match(glob, path):
+    """Glob NFA via dynamic programming: O(len(glob) * len(path)), O(path).
+
+    Preserve legacy **/ (zero or any prefix ending in slash), **, *, ?.
+    No regex or recursive backtracking is used for path matching.
+    """
+    n, i = len(path), 0
+    row = [True] + [False] * n
     while i < len(glob):
-        ch = glob[i]
         if glob.startswith("**/", i):
-            out.append("(?:.*/)?")
+            # A reachable prefix followed by arbitrary text ending in slash,
+            # or the empty prefix. Like the legacy regex, dot excludes newline.
+            nxt, reachable = row[:], False
+            for j in range(1, n + 1):
+                reachable = (reachable or row[j - 1]) and path[j - 1] != "\n"
+                nxt[j] = nxt[j] or (reachable and path[j - 1] == "/")
             i += 3
-            continue
-        if glob.startswith("**", i):
-            out.append(".*")
-            i += 2
-            continue
-        out.append("[^/]*" if ch == "*" else "[^/]" if ch == "?" else re.escape(ch))
-        i += 1
-    return re.compile("".join(out))
+        elif glob.startswith("**", i) or glob[i] == "*":
+            double = glob.startswith("**", i)
+            nxt = [row[0]] + [False] * n
+            for j in range(1, n + 1):
+                valid = path[j - 1] != ("\n" if double else "/")
+                nxt[j] = row[j] or (valid and nxt[j - 1])
+            i += 2 if double else 1
+        else:
+            token = glob[i]
+            nxt = [False] + [row[j - 1] and (
+                path[j - 1] != "/" if token == "?" else token == path[j - 1])
+                for j in range(1, n + 1)]
+            i += 1
+        row = nxt
+    return row[n]
 
 
 def _matches(globs, path):
     folded = _fold(path)
-    return any(_glob_regex(_fold(g)).fullmatch(folded) for g in globs)
+    return any(_glob_match(_fold(g), folded) for g in globs)
 
 
 def _well_formed(path):
@@ -656,8 +724,19 @@ def _finish(c):
     if c.policy is not None and isinstance(c.trusted.observed, dict):
         prov["guard_digest"] = c.policy["guard_digest"]
         prov["head_sha"] = _safe_str(c.trusted.observed, "head_sha")
+    events = tuple(c.events) if allow else ()
+    observations = ()
+    if c.revocation_observation is not None:
+        obs = {"_revocation_observation": c.revocation_observation}
+        if events:
+            # Store the safety observation atomically with the authorized effect.
+            events = (dict(events[0], payload=dict(events[0]["payload"], **obs)),) + events[1:]
+        else:
+            # Denial of a task effect must not erase a valid newer signed status.
+            observations = ({"kind": "REVOCATION_OBSERVED", "task_id": c.task_id,
+                             "payload": obs, "event_key": None, "delivery_id": None},)
     return Decision(allow, _safe_str(c.request, "action"), _safe_str(c.request, "task_id"),
-                    tuple(sorted(c.reasons)), tuple(c.events) if allow else (), prov)
+                    tuple(sorted(c.reasons)), events, prov, observations)
 
 
 def _evaluate(trusted, envelope, request, ledger, now):
@@ -681,6 +760,9 @@ def _evaluate(trusted, envelope, request, ledger, now):
         return _finish(c)
     c.state = reduce_events(ledger.events, c.task_id)
     if c.action == "RECONCILE":
+        check_reconcile_authority(c)
+        if c.reasons:
+            return _finish(c)
         check_revocation(c)
         act_reconcile(c)
         return _finish(c)
@@ -693,6 +775,10 @@ def _evaluate(trusted, envelope, request, ledger, now):
     check_time_window(c)
     check_envelope_binding(c)
     if c.fatal:
+        return _finish(c)
+    # Do not persist safety observations for requests failing authorization,
+    # identity, anchor or scope checks.
+    if c.reasons:
         return _finish(c)
     check_revocation(c)
     check_task_active(c)
@@ -720,10 +806,12 @@ def evaluate(trusted, envelope, request, ledger, now):
 def process(trusted, envelope, request, ledger, now):
     """Evaluate, then append atomically (compare-and-swap on the anchored tip)."""
     decision = evaluate(trusted, envelope, request, ledger, now)
-    if not decision.allow or not decision.events:
+    specs = decision.events + decision.observations
+    if not specs:
         return Outcome(decision, False)
     try:
-        ledger.append(decision.events, trusted.expected_tip, now)
+        ledger.append(specs, trusted.expected_tip, now)
     except LedgerConflict:
-        return Outcome(replace(decision, allow=False, reasons=("LEDGER_CONFLICT",), events=()), False)
-    return Outcome(decision, True)
+        return Outcome(replace(decision, allow=False, reasons=("LEDGER_CONFLICT",),
+                               events=(), observations=()), False)
+    return Outcome(decision, bool(decision.events), bool(decision.observations))
