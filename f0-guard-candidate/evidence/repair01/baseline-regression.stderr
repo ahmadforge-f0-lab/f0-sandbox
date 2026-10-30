@@ -1,0 +1,82 @@
+test_r1_authorized_recovery_works_without_envelope (tests.test_repair01.Repair01.test_r1_authorized_recovery_works_without_envelope) ... ok
+test_r1_other_repository_cannot_reconcile (tests.test_repair01.Repair01.test_r1_other_repository_cannot_reconcile) ... FAIL
+test_r1_registered_scope_cannot_be_rebound (tests.test_repair01.Repair01.test_r1_registered_scope_cannot_be_rebound) ... FAIL
+test_r1_unauthorized_reconcile_cannot_charge (tests.test_repair01.Repair01.test_r1_unauthorized_reconcile_cannot_charge) ... FAIL
+test_r2_denied_new_status_survives_reload_and_old_replay (tests.test_repair01.Repair01.test_r2_denied_new_status_survives_reload_and_old_replay) ... FAIL
+test_r2_equal_epoch_cannot_remove_revocation (tests.test_repair01.Repair01.test_r2_equal_epoch_cannot_remove_revocation) ... FAIL
+test_r2_pure_evaluation_requires_process_for_custody (tests.test_repair01.Repair01.test_r2_pure_evaluation_requires_process_for_custody) ... ok
+test_r2_watermark_is_repository_wide (tests.test_repair01.Repair01.test_r2_watermark_is_repository_wide) ... FAIL
+test_r3_glob_language_matches_legacy_small_inputs (tests.test_repair01.Repair01.test_r3_glob_language_matches_legacy_small_inputs) ... ok
+test_r3_legal_adversarial_glob_finishes_in_bounded_process (tests.test_repair01.Repair01.test_r3_legal_adversarial_glob_finishes_in_bounded_process) ... ERROR
+
+======================================================================
+ERROR: test_r3_legal_adversarial_glob_finishes_in_bounded_process (tests.test_repair01.Repair01.test_r3_legal_adversarial_glob_finishes_in_bounded_process)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 99, in test_r3_legal_adversarial_glob_finishes_in_bounded_process
+    result = subprocess.run([sys.executable, '-c', code], capture_output=True, timeout=2)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '-c', "from f0_guard.guard import _matches; assert not _matches(['*a*a*a*a*a*a'], 'a'*250+'b')"]' timed out after 2 seconds
+
+======================================================================
+FAIL: test_r1_other_repository_cannot_reconcile (tests.test_repair01.Repair01.test_r1_other_repository_cannot_reconcile)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 37, in test_r1_other_repository_cannot_reconcile
+    self.assertFalse(out.decision.allow)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_r1_registered_scope_cannot_be_rebound (tests.test_repair01.Repair01.test_r1_registered_scope_cannot_be_rebound)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 45, in test_r1_registered_scope_cannot_be_rebound
+    self.assertFalse(w.run('RECONCILE', NOW0 + 700, trusted=t).decision.allow)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_r1_unauthorized_reconcile_cannot_charge (tests.test_repair01.Repair01.test_r1_unauthorized_reconcile_cannot_charge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 28, in test_r1_unauthorized_reconcile_cannot_charge
+    self.assertFalse(out.decision.allow, caller)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_r2_denied_new_status_survives_reload_and_old_replay (tests.test_repair01.Repair01.test_r2_denied_new_status_survives_reload_and_old_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 66, in test_r2_denied_new_status_survives_reload_and_old_replay
+    self.assertFalse(out.decision.allow)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_r2_equal_epoch_cannot_remove_revocation (tests.test_repair01.Repair01.test_r2_equal_epoch_cannot_remove_revocation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 87, in test_r2_equal_epoch_cannot_remove_revocation
+    self.assertFalse(w.start(now=NOW0 + 4).decision.allow)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_r2_watermark_is_repository_wide (tests.test_repair01.Repair01.test_r2_watermark_is_repository_wide)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/21297cc6ca91/guard/f0-guard-candidate/tests/test_repair01.py", line 79, in test_r2_watermark_is_repository_wide
+    self.assertFalse(w.register(now=NOW0 + 4).decision.allow)
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.014s
+
+FAILED (failures=6, errors=1)

@@ -1,0 +1,462 @@
+{
+  "baseline": {
+    "failures": [],
+    "tests_run": 70
+  },
+  "mutants": [
+    {
+      "detected_by": [
+        "tests.test_guard.T03_ForgedOwner.test_forged_envelope_variants",
+        "tests.test_guard.T03_ForgedOwner.test_tampered_after_signing"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T03_ForgedOwner.test_forged_envelope_variants",
+        "tests.test_guard.T03_ForgedOwner.test_tampered_after_signing"
+      ],
+      "failing_tests": 4,
+      "killed": true,
+      "mutant": "owner_signature_not_verified"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02_Scope.test_wrong_repo_in_observed",
+        "tests.test_guard.T02_Scope.test_wrong_repo_in_signed_envelope"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02_Scope.test_wrong_repo_in_observed",
+        "tests.test_guard.T02_Scope.test_wrong_repo_in_signed_envelope"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "repo_scope_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02_Scope.test_protected_branch_as_work_branch",
+        "tests.test_guard.T02_Scope.test_wrong_base_sha_and_branch"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02_Scope.test_protected_branch_as_work_branch",
+        "tests.test_guard.T02_Scope.test_wrong_base_sha_and_branch"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "branch_scope_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02_Scope.test_protected_paths"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02_Scope.test_protected_paths"
+      ],
+      "failing_tests": 7,
+      "killed": true,
+      "mutant": "protected_paths_not_enforced"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02_Scope.test_protected_paths"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02_Scope.test_protected_paths"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "path_case_unicode_folding_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02_Scope.test_unauthorized_author"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02_Scope.test_unauthorized_author"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "author_check_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T03_ForgedOwner.test_author_cannot_self_certify_through_request_fields"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T03_ForgedOwner.test_author_cannot_self_certify_through_request_fields"
+      ],
+      "failing_tests": 8,
+      "killed": true,
+      "mutant": "request_schema_permissive_self_certify"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T03_ForgedOwner.test_envelope_replaced_after_registration"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T03_ForgedOwner.test_envelope_replaced_after_registration"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "envelope_swap_after_registration"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T03_ForgedOwner.test_envelope_exceeding_policy_caps"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T03_ForgedOwner.test_envelope_exceeding_policy_caps"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "envelope_limits_unchecked"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T04_ForgedReviewer.test_self_appointed_reviewer"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T04_ForgedReviewer.test_self_appointed_reviewer"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "reviewer_roster_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T04_ForgedReviewer.test_forged_signature"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T04_ForgedReviewer.test_forged_signature"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "reviewer_signature_not_verified"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T04_ForgedReviewer.test_author_conflict_variants"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T04_ForgedReviewer.test_author_conflict_variants"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "reviewer_conflict_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T05_StaleVerdict.test_verdict_bound_to_guard_and_oracle_identity"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T05_StaleVerdict.test_verdict_bound_to_guard_and_oracle_identity"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "verdict_binding_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T05_StaleVerdict.test_old_head_verdict_reused_on_new_sha"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T05_StaleVerdict.test_old_head_verdict_reused_on_new_sha"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "old_head_verdict_accepted"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T05_StaleVerdict.test_verdict_freshness_window"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T05_StaleVerdict.test_verdict_freshness_window"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "verdict_freshness_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T06_Identity.test_altered_oracle_identity"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T06_Identity.test_altered_oracle_identity"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "oracle_identity_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T06_Identity.test_altered_guard_identity"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T06_Identity.test_altered_guard_identity"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "guard_identity_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T06_Identity.test_policy_tampering_rejected_by_pin"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T06_Identity.test_policy_tampering_rejected_by_pin"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "policy_pin_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T07_Duplicates.test_same_head_distinct_delivery_ids",
+        "tests.test_guard.T07_Duplicates.test_replayed_delivery_id"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T07_Duplicates.test_same_head_distinct_delivery_ids",
+        "tests.test_guard.T07_Duplicates.test_replayed_delivery_id"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "duplicate_detection_disabled"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T08_Concurrency.test_second_start_while_in_flight"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T08_Concurrency.test_second_start_while_in_flight"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "in_flight_guard_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T08_Concurrency.test_cas_two_decisions_same_snapshot_only_one_applies",
+        "tests.test_guard.T08_Concurrency.test_threaded_race_yields_single_effect"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T08_Concurrency.test_cas_two_decisions_same_snapshot_only_one_applies",
+        "tests.test_guard.T08_Concurrency.test_threaded_race_yields_single_effect"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "ledger_cas_disabled"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T08_Concurrency.test_stale_or_missing_anchor",
+        "tests.test_guard.T12_Recovery.test_tampered_and_truncated_ledger"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T08_Concurrency.test_stale_or_missing_anchor",
+        "tests.test_guard.T12_Recovery.test_tampered_and_truncated_ledger"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "ledger_anchor_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T12_Recovery.test_tampered_and_truncated_ledger"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T12_Recovery.test_tampered_and_truncated_ledger"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "ledger_integrity_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T09_Retries.test_retry_exhaustion"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T09_Retries.test_retry_exhaustion"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "retry_limit_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T09_Retries.test_retry_exhaustion"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T09_Retries.test_retry_exhaustion"
+      ],
+      "failing_tests": 3,
+      "killed": true,
+      "mutant": "retry_limit_off_by_one"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_expired_task"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_expired_task"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "expiry_not_enforced"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_expired_task"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_expired_task"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "not_yet_valid_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_revoked_by_signed_list"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_revoked_by_signed_list"
+      ],
+      "failing_tests": 5,
+      "killed": true,
+      "mutant": "revocation_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_forged_or_missing_revocation_status_fails_closed"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_forged_or_missing_revocation_status_fails_closed"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "revocation_unavailable_fail_open"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_stale_revocation_list_replay_fails_closed"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_stale_revocation_list_replay_fails_closed"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "stale_revocation_list_accepted"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T10_ExpiryRevocation.test_unusable_revocation_list_never_blocks_reconcile"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T10_ExpiryRevocation.test_unusable_revocation_list_never_blocks_reconcile"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "forged_revocation_list_blocks_recovery"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T02b_GlobLimits.test_wildcard_cap_applies_to_envelope_and_policy"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T02b_GlobLimits.test_wildcard_cap_applies_to_envelope_and_policy"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "glob_wildcard_cap_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T11_Budget.test_reserve_exceeds_remaining_budget"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T11_Budget.test_reserve_exceeds_remaining_budget"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "budget_reserve_unchecked"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T11_Budget.test_budget_stop_after_overrun"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T11_Budget.test_budget_stop_after_overrun"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "budget_stop_not_enforced"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T11_Budget.test_fail_closed_on_internal_error"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T11_Budget.test_fail_closed_on_internal_error"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "fail_open_on_internal_error"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T11_Budget.test_forged_evidence_rejected"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T11_Budget.test_forged_evidence_rejected"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "evidence_provenance_ignored"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T11_Budget.test_min_charge_applies"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T11_Budget.test_min_charge_applies"
+      ],
+      "failing_tests": 1,
+      "killed": true,
+      "mutant": "min_charge_removed"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T12_Recovery.test_reconcile_before_lease_is_noop_after_lease_interrupts_once",
+        "tests.test_guard.T12_Recovery.test_no_progress_until_resume_with_reconstructed_identity"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T12_Recovery.test_reconcile_before_lease_is_noop_after_lease_interrupts_once",
+        "tests.test_guard.T12_Recovery.test_no_progress_until_resume_with_reconstructed_identity"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "interruption_not_charged"
+    },
+    {
+      "detected_by": [
+        "tests.test_guard.T12_Recovery.test_no_progress_until_resume_with_reconstructed_identity",
+        "tests.test_guard.T12_Recovery.test_state_reconstructed_from_persisted_ledger_matches"
+      ],
+      "expected_detectors": [
+        "tests.test_guard.T12_Recovery.test_no_progress_until_resume_with_reconstructed_identity",
+        "tests.test_guard.T12_Recovery.test_state_reconstructed_from_persisted_ledger_matches"
+      ],
+      "failing_tests": 2,
+      "killed": true,
+      "mutant": "resume_not_required"
+    }
+  ],
+  "post_run_baseline": {
+    "failures": [],
+    "tests_run": 70
+  },
+  "summary": {
+    "killed": 39,
+    "mutants": 39,
+    "survived": 0
+  }
+}

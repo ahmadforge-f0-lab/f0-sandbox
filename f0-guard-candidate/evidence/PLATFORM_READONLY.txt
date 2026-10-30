@@ -1,0 +1,5 @@
+## read-only GitHub facts (gh api GET)
+workflows: 0
+actions_permissions: {"message":"Access to this GitHub Actions path is not permitted through this proxy.","documentation_url":"https://docs.anthropic.com/en/docs/claude-code/github-actions"}gh: Access to this GitHub Actions path is not permitted through this proxy. (HTTP 403)
+ruleset: {"bypass_actors":[],"enforcement":"active","id":26168998,"name":"F0-BASE-GUARD","rules":["deletion","non_fast_forward","pull_request"]}
+main: d0f6e147e9e52ec911331b18c9f61091b7594edd	refs/heads/main
