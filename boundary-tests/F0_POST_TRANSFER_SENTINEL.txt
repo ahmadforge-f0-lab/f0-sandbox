@@ -1,0 +1,4 @@
+TRACK_ID: F0-POST-TRANSFER-BOUNDARY-02
+SANDBOX: ahmadforge-f0-lab/f0-sandbox
+ORIGINAL_MAIN_SHA: d0f6e147e9e52ec911331b18c9f61091b7594edd
+DECLARATION: Synthetic-only test artifact. No real data. Safe to delete.
